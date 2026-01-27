@@ -8,8 +8,28 @@
   box-sizing: border-box;
 }
 
-html,
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  height: 100%;
   overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(to bottom, #fce7f3, #f3e8ff, #dbeafe);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #f9a8d4, #c084fc);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #f472b6, #a855f7);
 }

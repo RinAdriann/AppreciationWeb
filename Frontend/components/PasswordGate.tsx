@@ -62,7 +62,7 @@ export default function PasswordGate({ onSuccess }: PasswordGateProps) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Where was our first date? 🌟
+                When is our anniversary? 🌟
               </label>
               <input
                 type="text"
@@ -94,7 +94,7 @@ export default function PasswordGate({ onSuccess }: PasswordGateProps) {
           </form>
 
           <p className="text-xs text-center text-gray-500">
-            Hint: Think about that special place where it all began 🌹
+            Hint: Think about that special time when it all began 🌹
           </p>
         </div>
       </motion.div>

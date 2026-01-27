@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import PasswordGate from '@/components/PasswordGate';
-import JourneyView from '@/components/JourneyView';
+import JourneyTree from '@/components/JourneyTree';
 
 export default function Home() {
   const [token, setToken] = useState<string | null>(null);
@@ -10,7 +10,6 @@ export default function Home() {
 
   useEffect(() => {
     setIsClient(true);
-    // Check for existing token
     const savedToken = sessionStorage.getItem('journey_token');
     if (savedToken) {
       setToken(savedToken);
@@ -18,7 +17,7 @@ export default function Home() {
   }, []);
 
   if (!isClient) {
-    return null; // Prevent hydration mismatch
+    return null;
   }
 
   return (
@@ -26,7 +25,7 @@ export default function Home() {
       {!token ? (
         <PasswordGate onSuccess={setToken} />
       ) : (
-        <JourneyView token={token} />
+        <JourneyTree token={token} />
       )}
     </>
   );
