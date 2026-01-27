@@ -26,11 +26,6 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
   const [loading, setLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
   useEffect(() => {
     async function fetchData() {
       try {
@@ -44,6 +39,19 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
     }
     fetchData();
   }, [token]);
+
+  // Auto-scroll to bottom on load
+  useEffect(() => {
+    if (!loading && containerRef.current) {
+      // Small delay to ensure content is rendered
+      setTimeout(() => {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: 'smooth'
+        });
+      }, 100);
+    }
+  }, [loading]);
 
   if (loading) {
     return (
@@ -68,18 +76,22 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
   return (
     <div 
       ref={containerRef}
-      className="min-h-screen bg-gradient-to-b from-pink-50 via-purple-50 to-blue-50 overflow-x-hidden"
+      className="min-h-screen bg-gradient-to-b from-pink-50 via-purple-50 to-blue-50 overflow-x-hidden relative"
     >
-      {/* Sakura Tree Top */}
-      <TreeTop scrollProgress={scrollYProgress} />
+      {/* Falling Sakura Petals - Full Page */}
+      <FallingSakuraPetals />
 
       {/* Tree Trunk Container */}
       <div className="relative max-w-7xl mx-auto px-4 py-20">
+        
+        {/* Sakura Tree Top */}
+        <TreeTop />
+
         {/* Center Trunk */}
         <div className="absolute left-1/2 top-0 bottom-0 w-2 bg-gradient-to-b from-pink-300 via-purple-300 to-pink-200 transform -translate-x-1/2 rounded-full shadow-lg" />
 
-        {/* Tree Sections */}
-        {sections.map((section, sectionIndex) => (
+        {/* Tree Sections - Reversed order so bottom is first */}
+        {sections.reverse().map((section, sectionIndex) => (
           <TreeSection
             key={sectionIndex}
             branches={section}
@@ -87,13 +99,13 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
           />
         ))}
 
-        {/* Tree Root */}
+        {/* Tree Root - At the top now */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: -50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
           viewport={{ once: true }}
-          className="text-center mt-32 pb-20"
+          className="text-center mb-32 pt-20"
         >
           <div className="text-6xl mb-4">🌱</div>
           <p className="text-2xl font-semibold text-purple-800">
@@ -108,83 +120,103 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
   );
 }
 
-// Sakura Tree Top Component
-function TreeTop({ scrollProgress }: { scrollProgress: any }) {
-  const y = useTransform(scrollProgress, [0, 0.3], [0, 100]);
-  const opacity = useTransform(scrollProgress, [0, 0.2], [1, 0]);
+// Falling Sakura Petals - Full Page Coverage
+function FallingSakuraPetals() {
+  const petalCount = 30;
 
   return (
-    <motion.div
-      style={{ y, opacity }}
-      className="sticky top-0 z-10 flex flex-col items-center justify-center min-h-screen pointer-events-none"
-    >
-      {/* Sakura Petals Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
+    <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden">
+      {[...Array(petalCount)].map((_, i) => {
+        const startX = Math.random() * 100; // Random start position (%)
+        const duration = Math.random() * 15 + 15; // 15-30 seconds
+        const delay = Math.random() * 10; // 0-10 seconds delay
+        const size = Math.random() * 1.5 + 1; // 1-2.5 size multiplier
+
+        return (
           <motion.div
             key={i}
-            className="absolute text-4xl"
+            className="absolute text-pink-400"
+            style={{
+              left: `${startX}%`,
+              fontSize: `${size}rem`,
+            }}
             initial={{ 
-              x: Math.random() * window.innerWidth,
-              y: -50,
+              y: -100,
+              x: 0,
               rotate: 0,
-              opacity: 0.8
+              opacity: 0.7
             }}
             animate={{
-              y: window.innerHeight + 100,
-              rotate: 360,
-              opacity: 0
+              y: '100vh',
+              x: [0, 30, -20, 40, 0], // Swaying motion
+              rotate: [0, 180, 360, 540],
+              opacity: [0.7, 0.9, 0.7, 0.5, 0]
             }}
             transition={{
-              duration: Math.random() * 10 + 10,
+              duration: duration,
               repeat: Infinity,
-              delay: Math.random() * 5,
-              ease: 'linear'
+              delay: delay,
+              ease: 'linear',
+              x: {
+                duration: duration / 2,
+                repeat: Infinity,
+                repeatType: 'reverse',
+                ease: 'easeInOut'
+              },
+              rotate: {
+                duration: duration,
+                repeat: Infinity,
+                ease: 'linear'
+              }
             }}
           >
             🌸
           </motion.div>
-        ))}
-      </div>
+        );
+      })}
+    </div>
+  );
+}
 
-      {/* Main Tree Crown */}
-      <motion.div
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 1.5, type: 'spring' }}
-        className="relative z-10"
-      >
+// Sakura Tree Top Component
+function TreeTop() {
+  return (
+    <motion.div
+      initial={{ scale: 0, opacity: 0 }}
+      whileInView={{ scale: 1, opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1.5, type: 'spring' }}
+      className="relative z-20 flex flex-col items-center justify-center py-20 mb-20"
+    >
+      {/* Placeholder for custom tree top image */}
+      <div className="relative">
+        {/* TODO: Replace with custom tree top image */}
+        {/* <img src="/images/tree-top.png" alt="Tree Top" className="w-full max-w-md" /> */}
+        
+        {/* Temporary placeholder */}
         <div className="text-9xl mb-8 filter drop-shadow-2xl">
           🌸
         </div>
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 1 }}
-          className="text-5xl md:text-6xl font-bold text-center bg-gradient-to-r from-pink-600 via-purple-600 to-pink-600 bg-clip-text text-transparent px-8"
-        >
-          To Our Future Endeavors
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 1 }}
-          className="text-xl md:text-2xl text-center text-purple-600 mt-4 font-light italic"
-        >
-          A Journey of Love, Growing Together
-        </motion.p>
-      </motion.div>
+      </div>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, y: [0, 10, 0] }}
-        transition={{ delay: 2, duration: 2, repeat: Infinity }}
-        className="absolute bottom-20 text-purple-400"
+      <motion.h1
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.3, duration: 1 }}
+        className="text-4xl md:text-6xl font-bold text-center bg-gradient-to-r from-pink-600 via-purple-600 to-pink-600 bg-clip-text text-transparent px-8"
       >
-        <div className="text-sm mb-2 text-center">Scroll to explore our journey</div>
-        <div className="text-3xl text-center">↓</div>
-      </motion.div>
+        To Our Future Endeavors
+      </motion.h1>
+      <motion.p
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.6, duration: 1 }}
+        className="text-lg md:text-2xl text-center text-purple-600 mt-4 font-light italic"
+      >
+        A Journey of Love, Growing Together
+      </motion.p>
     </motion.div>
   );
 }
@@ -197,7 +229,8 @@ function TreeSection({ branches, sectionIndex }: { branches: JourneyStep[], sect
       <motion.div
         initial={{ scale: 0 }}
         whileInView={{ scale: 1 }}
-        viewport={{ once: true }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.5 }}
         className="absolute left-1/2 top-0 w-6 h-6 bg-pink-400 rounded-full transform -translate-x-1/2 shadow-lg z-10 border-4 border-white"
       />
 
@@ -208,7 +241,7 @@ function TreeSection({ branches, sectionIndex }: { branches: JourneyStep[], sect
             key={branch.id}
             branch={branch}
             side={index % 2 === 0 ? 'left' : 'right'}
-            delay={index * 0.2}
+            delay={index * 0.1}
           />
         ))}
       </div>
@@ -230,68 +263,79 @@ function TreeBranch({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay }}
-      viewport={{ once: true }}
-      className={`relative w-full ${isLeft ? 'md:w-5/12' : 'md:w-5/12'} ${isLeft ? 'md:ml-auto md:pr-20' : 'md:pl-20'} px-6 md:px-0`}
+      initial={{ opacity: 0, x: isLeft ? -100 : 100 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.8, delay }}
+      className={`relative flex ${isLeft ? 'justify-start' : 'justify-end'} z-20`}
     >
-      {/* Branch Line */}
+      {/* Branch Line - Placeholder for custom branch graphic */}
       <div
-        className={`absolute top-1/2 ${isLeft ? 'right-full mr-4' : 'left-full ml-4'} w-16 md:w-24 h-1 bg-gradient-to-${isLeft ? 'r' : 'l'} from-pink-300 to-transparent`}
+        className={`absolute top-1/2 ${isLeft ? 'left-1/2' : 'right-1/2'} w-20 md:w-32 h-1 bg-gradient-to-${isLeft ? 'l' : 'r'} from-pink-300 to-transparent`}
         style={{ transform: 'translateY(-50%)' }}
       />
+      {/* TODO: Replace with custom branch image */}
+      {/* <img 
+        src="/images/branch.png" 
+        alt="Branch"
+        className={`absolute top-1/2 ${isLeft ? 'left-1/2' : 'right-1/2'} transform -translate-y-1/2 ${isLeft ? '' : 'scale-x-[-1]'}`}
+      /> */}
 
-      {/* Card Container */}
+      {/* Branch Content */}
       <motion.div
         whileHover={{ scale: 1.05, y: -10 }}
         transition={{ type: 'spring', stiffness: 300 }}
-        className="rounded-3xl overflow-hidden shadow-2xl bg-white/90 backdrop-blur-sm p-6"
-        style={{ borderColor: branch.theme.accent, borderWidth: 3 }}
+        className={`relative w-full ${isLeft ? 'md:w-5/12 md:pr-40' : 'md:w-5/12 md:pl-40'} px-6 md:px-0`}
       >
-        {/* Image Container - 3:4 Aspect Ratio */}
-        <div className="relative w-full rounded-2xl overflow-hidden shadow-lg mb-4">
-          <div className="aspect-[3/4] w-full">
-            <img
-              src={branch.image_url}
-              alt={branch.phase}
-              className="w-full h-full object-cover"
-            />
+        <div 
+          className="rounded-3xl overflow-hidden shadow-2xl bg-white/90 backdrop-blur-sm p-4 md:p-6"
+          style={{ borderColor: branch.theme.accent, borderWidth: 3 }}
+        >
+          {/* Image Container - 3:4 Aspect Ratio */}
+          <div className="relative w-full rounded-2xl overflow-hidden shadow-lg mb-4">
+            <div className="aspect-[3/4] w-full max-w-xs mx-auto md:max-w-none">
+              <img
+                src={branch.image_url}
+                alt={branch.phase}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            {/* Image Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+            <div className="absolute bottom-4 left-4 right-4">
+              <p className="text-white text-sm font-medium drop-shadow-lg">
+                {branch.date}
+              </p>
+            </div>
           </div>
-          {/* Image Overlay */}
-          <div 
-            className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"
-          />
-          <div className="absolute bottom-4 left-4 right-4">
-            <p className="text-white text-sm font-medium">{branch.date}</p>
+
+          {/* Text Content - Keep original colors */}
+          <div className="space-y-3">
+            <h3 
+              className="text-xl md:text-2xl font-bold"
+              style={{ color: branch.theme.accent }}
+            >
+              {branch.phase}
+            </h3>
+            <p 
+              className="text-sm md:text-base leading-relaxed"
+              style={{ color: branch.theme.text }}
+            >
+              {branch.caption}
+            </p>
           </div>
-        </div>
 
-        {/* Text Content */}
-        <div className="space-y-3">
-          <h3 
-            className="text-2xl font-bold"
-            style={{ color: branch.theme.accent }}
-          >
-            {branch.phase}
-          </h3>
-          <p 
-            className="text-base leading-relaxed"
-            style={{ color: branch.theme.text }}
-          >
-            {branch.caption}
-          </p>
-        </div>
-
-        {/* Decorative Element */}
-        <div className="mt-4 flex justify-center">
-          <motion.div
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-            className="text-2xl opacity-30"
-          >
-            🌸
-          </motion.div>
+          {/* Decorative Element */}
+          <div className="mt-4 flex justify-center">
+            <motion.div
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+              className="text-2xl opacity-30"
+            >
+              🌸
+            </motion.div>
+          </div>
         </div>
       </motion.div>
     </motion.div>
