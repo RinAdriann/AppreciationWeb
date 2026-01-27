@@ -104,7 +104,6 @@ export default function JourneyView({ token }: JourneyViewProps) {
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className="flex-1 flex flex-col"
           >
-            {/* Image Section */}
             <div className="relative h-[60vh] w-full overflow-hidden">
               <img
                 src={currentData.image_url}
@@ -113,7 +112,6 @@ export default function JourneyView({ token }: JourneyViewProps) {
               />
               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30" />
               
-              {/* Progress Dots */}
               <div className="absolute top-4 left-0 right-0 flex justify-center gap-1 px-4">
                 {journeyData.map((_, idx) => (
                   <div
@@ -127,7 +125,6 @@ export default function JourneyView({ token }: JourneyViewProps) {
               </div>
             </div>
 
-            {/* Text Section */}
             <div className="flex-1 p-6 flex flex-col justify-between">
               <div className="space-y-4">
                 <div>
@@ -152,7 +149,6 @@ export default function JourneyView({ token }: JourneyViewProps) {
                 </p>
               </div>
 
-              {/* Navigation */}
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={handlePrev}
@@ -195,7 +191,6 @@ export default function JourneyView({ token }: JourneyViewProps) {
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className="w-full flex"
           >
-            {/* Left: Image */}
             <div className="w-1/2 relative overflow-hidden">
               <img
                 src={currentData.image_url}
@@ -204,9 +199,7 @@ export default function JourneyView({ token }: JourneyViewProps) {
               />
             </div>
 
-            {/* Right: Content */}
             <div className="w-1/2 flex flex-col justify-center p-16 space-y-8">
-              {/* Progress */}
               <div className="flex gap-2">
                 {journeyData.map((_, idx) => (
                   <div

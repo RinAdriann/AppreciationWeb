@@ -21,7 +21,6 @@ export default function PasswordGate({ onSuccess }: PasswordGateProps) {
     try {
       const data = await verifyPassword(password);
       if (data.success && data.token) {
-        // Store token in sessionStorage
         sessionStorage.setItem('journey_token', data.token);
         onSuccess(data.token);
       }
@@ -42,7 +41,6 @@ export default function PasswordGate({ onSuccess }: PasswordGateProps) {
         className="max-w-md w-full"
       >
         <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-8 space-y-6">
-          {/* Heart Icon */}
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -52,7 +50,6 @@ export default function PasswordGate({ onSuccess }: PasswordGateProps) {
             <div className="text-6xl">💕</div>
           </motion.div>
 
-          {/* Title */}
           <div className="text-center space-y-2">
             <h1 className="text-3xl font-bold text-gray-800">
               Our Journey
@@ -62,7 +59,6 @@ export default function PasswordGate({ onSuccess }: PasswordGateProps) {
             </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -97,7 +93,6 @@ export default function PasswordGate({ onSuccess }: PasswordGateProps) {
             </button>
           </form>
 
-          {/* Hint */}
           <p className="text-xs text-center text-gray-500">
             Hint: Think about that special place where it all began 🌹
           </p>
