@@ -322,6 +322,82 @@ app.get('/api/journey', async (req, res) => {
   }
 });
 
+app.get('/setup-database', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    console.log('Creating tables...');
+    
+    // Create journey_steps table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS journey_steps (
+        id SERIAL PRIMARY KEY,
+        phase VARCHAR(255) NOT NULL,
+        date VARCHAR(100) NOT NULL,
+        image_public_id VARCHAR(500) NOT NULL,
+        caption TEXT NOT NULL,
+        theme_background VARCHAR(50) NOT NULL,
+        theme_text VARCHAR(50) NOT NULL,
+        theme_accent VARCHAR(50) NOT NULL,
+        step_order INTEGER NOT NULL UNIQUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    
+    console.log('✅ Table created');
+    
+    // Create index
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_step_order ON journey_steps(step_order);
+    `);
+    
+    console.log('✅ Index created');
+    
+    // Check if data exists
+    const checkData = await client.query('SELECT COUNT(*) FROM journey_steps');
+    const count = parseInt(checkData.rows[0].count);
+    
+    console.log(`Current row count: ${count}`);
+    
+    // Insert sample data if empty
+    if (count === 0) {
+      console.log('Inserting sample data...');
+      await client.query(`
+        INSERT INTO journey_steps (phase, date, image_public_id, caption, theme_background, theme_text, theme_accent, step_order)
+        VALUES 
+          ('The Spark', 'November 1, 2025', 'journey/step_1', 'The day we met...', '#FFF5F7', '#2d3436', '#fab1a0', 1),
+          ('Getting Closer', 'November 15, 2025', 'journey/step_2', 'Late night conversations that made my heart race...', '#FFF0F5', '#2d3436', '#fd79a8', 2);
+      `);
+      console.log('✅ Sample data inserted');
+    }
+    
+    // Get all data
+    const result = await client.query('SELECT * FROM journey_steps ORDER BY step_order');
+    
+    res.json({ 
+      success: true, 
+      message: '✅ Database setup complete!',
+      tables: ['journey_steps'],
+      step_count: result.rows.length,
+      steps: result.rows.map(row => ({
+        id: row.id,
+        phase: row.phase,
+        date: row.date,
+        step_order: row.step_order
+      }))
+    });
+    
+  } catch (error) {
+    console.error('❌ Setup error:', error);
+    res.status(500).json({ 
+      error: error.message,
+      details: error.stack 
+    });
+  } finally {
+    client.release();
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
