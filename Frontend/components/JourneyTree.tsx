@@ -67,6 +67,9 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
     );
   }
 
+  // REVERSE the journey data first so newest is at top
+  const reversedData = [...journeyData].reverse();
+
   // Split data into sections of 4
   const sections = [];
   for (let i = 0; i < journeyData.length; i += 4) {
@@ -91,7 +94,7 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
         <div className="absolute left-1/2 top-0 bottom-0 w-2 bg-gradient-to-b from-pink-300 via-purple-300 to-pink-200 transform -translate-x-1/2 rounded-full shadow-lg" />
 
         {/* Tree Sections - Reversed order so bottom is first */}
-        {sections.reverse().map((section, sectionIndex) => (
+        {sections.map((section, sectionIndex) => (
           <TreeSection
             key={sectionIndex}
             branches={section}
