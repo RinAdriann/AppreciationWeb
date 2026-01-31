@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { getJourneyData } from '@/lib/api';
+import SectionSplitter from './SectionSplitter';
 
 interface JourneyStep {
   id: number;
@@ -43,7 +44,6 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
   // Auto-scroll to bottom on load
   useEffect(() => {
     if (!loading && containerRef.current) {
-      // Small delay to ensure content is rendered
       setTimeout(() => {
         window.scrollTo({
           top: document.documentElement.scrollHeight,
@@ -70,10 +70,10 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
   // REVERSE the journey data first so newest is at top
   const reversedData = [...journeyData].reverse();
 
-  // Split data into sections of 4
+  // Split reversed data into sections of 4
   const sections = [];
-  for (let i = 0; i < journeyData.length; i += 4) {
-    sections.push(journeyData.slice(i, i + 4));
+  for (let i = 0; i < reversedData.length; i += 4) {
+    sections.push(reversedData.slice(i, i + 4));
   }
 
   return (
@@ -91,18 +91,31 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
         <TreeTop />
 
         {/* Center Trunk */}
-        <div className="absolute left-1/2 top-0 bottom-0 w-2 bg-gradient-to-b from-pink-300 via-purple-300 to-pink-200 transform -translate-x-1/2 rounded-full shadow-lg" />
+        <div 
+          className="absolute left-1/2 w-2 bg-gradient-to-b from-pink-300 via-purple-300 to-pink-200 transform -translate-x-1/2 rounded-full shadow-lg"
+          style={{
+            top: '280px',
+            bottom: '220px'
+          }}
+        />
 
-        {/* Tree Sections - Reversed order so bottom is first */}
+        {/* Tree Sections WITH SPLITTERS */}
         {sections.map((section, sectionIndex) => (
-          <TreeSection
-            key={sectionIndex}
-            branches={section}
-            sectionIndex={sectionIndex}
-          />
+          <div key={sectionIndex}>
+            {/* Add Section Splitter BEFORE each section (except first) */}
+            {sectionIndex > 0 && (
+              <SectionSplitter sectionIndex={sectionIndex} />
+            )}
+            
+            {/* Existing Section */}
+            <TreeSection
+              branches={section}
+              sectionIndex={sectionIndex}
+            />
+          </div>
         ))}
 
-        {/* Tree Root - At the top now */}
+        {/* Tree Root */}
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -130,10 +143,10 @@ function FallingSakuraPetals() {
   return (
     <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden">
       {[...Array(petalCount)].map((_, i) => {
-        const startX = Math.random() * 100; // Random start position (%)
-        const duration = Math.random() * 15 + 15; // 15-30 seconds
-        const delay = Math.random() * 10; // 0-10 seconds delay
-        const size = Math.random() * 1.5 + 1; // 1-2.5 size multiplier
+        const startX = Math.random() * 100;
+        const duration = Math.random() * 15 + 15;
+        const delay = Math.random() * 10;
+        const size = Math.random() * 1.5 + 1;
 
         return (
           <motion.div
@@ -151,7 +164,7 @@ function FallingSakuraPetals() {
             }}
             animate={{
               y: '100vh',
-              x: [0, 30, -20, 40, 0], // Swaying motion
+              x: [0, 30, -20, 40, 0],
               rotate: [0, 180, 360, 540],
               opacity: [0.7, 0.9, 0.7, 0.5, 0]
             }}
