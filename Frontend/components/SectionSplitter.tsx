@@ -12,7 +12,7 @@ export default function SectionSplitter({ sectionIndex, totalSections }: Section
   const [sparkles, setSparkles] = useState<Array<{ id: number; x: number; y: number }>>([]);
 
   // Calculate chapter number from BOTTOM (reverse order)
-  const chapterNumber = totalSections - sectionIndex;
+  const chapterNumber = totalSections - (sectionIndex + 1);
 
   // Theme colors that loop every 4 sections (still uses sectionIndex for color rotation)
   const themes = [

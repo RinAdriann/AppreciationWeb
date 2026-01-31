@@ -103,18 +103,18 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
         {sections.map((section, sectionIndex) => (
           <div key={sectionIndex}>
             {/* Add Section Splitter BEFORE each section (except first) */}
-            {sectionIndex > 0 && (
-              <SectionSplitter 
-                sectionIndex={sectionIndex}
-                totalSections={sections.length} // ← Add this prop
-              />
-            )}
-            
-            {/* Existing Section */}
             <TreeSection
               branches={section}
               sectionIndex={sectionIndex}
             />
+
+            {sectionIndex < sections.length - 1 && (
+              <SectionSplitter 
+                sectionIndex={sectionIndex}
+                totalSections={sections.length} 
+              />
+            )}
+
           </div>
         ))}
 
