@@ -1,16 +1,20 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface SectionSplitterProps {
   sectionIndex: number;
+  totalSections: number; // ← Add this
 }
 
-export default function SectionSplitter({ sectionIndex }: SectionSplitterProps) {
+export default function SectionSplitter({ sectionIndex, totalSections }: SectionSplitterProps) {
   const [sparkles, setSparkles] = useState<Array<{ id: number; x: number; y: number }>>([]);
 
-  // Theme colors that loop every 4 sections
+  // Calculate chapter number from BOTTOM (reverse order)
+  const chapterNumber = totalSections - sectionIndex;
+
+  // Theme colors that loop every 4 sections (still uses sectionIndex for color rotation)
   const themes = [
     { 
       bg: 'linear-gradient(135deg, #FFF5F7 0%, #FFE5EB 100%)', // Light pink
@@ -41,7 +45,6 @@ export default function SectionSplitter({ sectionIndex }: SectionSplitterProps) 
     }));
     setSparkles(newSparkles);
     
-    // Clear sparkles after animation
     setTimeout(() => setSparkles([]), 1500);
   };
 
@@ -170,7 +173,7 @@ export default function SectionSplitter({ sectionIndex }: SectionSplitterProps) 
           />
         </div>
 
-        {/* Optional: Section Number */}
+        {/* Chapter Number - NOW COUNTS FROM BOTTOM! */}
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 0.6 }}
@@ -178,7 +181,7 @@ export default function SectionSplitter({ sectionIndex }: SectionSplitterProps) 
           transition={{ delay: 0.6 }}
           className="text-center mt-4 text-purple-600 font-semibold text-sm tracking-widest"
         >
-          CHAPTER {sectionIndex + 1}
+          CHAPTER {chapterNumber}
         </motion.p>
       </motion.div>
 

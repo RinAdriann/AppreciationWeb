@@ -94,8 +94,8 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
         <div 
           className="absolute left-1/2 w-2 bg-gradient-to-b from-pink-300 via-purple-300 to-pink-200 transform -translate-x-1/2 rounded-full shadow-lg"
           style={{
-            top: '280px',
-            bottom: '220px'
+            top: '400px',
+            bottom: '360px'
           }}
         />
 
@@ -104,7 +104,10 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
           <div key={sectionIndex}>
             {/* Add Section Splitter BEFORE each section (except first) */}
             {sectionIndex > 0 && (
-              <SectionSplitter sectionIndex={sectionIndex} />
+              <SectionSplitter 
+                sectionIndex={sectionIndex}
+                totalSections={sections.length} // ← Add this prop
+              />
             )}
             
             {/* Existing Section */}
@@ -241,14 +244,6 @@ function TreeTop() {
 function TreeSection({ branches, sectionIndex }: { branches: JourneyStep[], sectionIndex: number }) {
   return (
     <div className="relative mb-40">
-      {/* Section Marker on Trunk */}
-      <motion.div
-        initial={{ scale: 0 }}
-        whileInView={{ scale: 1 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.5 }}
-        className="absolute left-1/2 top-0 w-6 h-6 bg-pink-400 rounded-full transform -translate-x-1/2 shadow-lg z-10 border-4 border-white"
-      />
 
       {/* Branches */}
       <div className="space-y-24 pt-12">
