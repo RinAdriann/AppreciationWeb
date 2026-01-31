@@ -67,14 +67,14 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
     );
   }
 
-  // REVERSE the journey data first so newest is at top
-  const reversedData = [...journeyData].reverse();
-
-  // Split reversed data into sections of 4
+  // Split data into sections of 4
   const sections = [];
-  for (let i = 0; i < reversedData.length; i += 4) {
-    sections.push(reversedData.slice(i, i + 4));
+  for (let i = 0; i < journeyData.length; i += 4) {
+    sections.push(journeyData.slice(i, i + 4));
   }
+
+  // REVERSE the journey data so newest is at top
+  sections.reverse();
 
   return (
     <div 
@@ -94,7 +94,7 @@ export default function JourneyTree({ token }: JourneyTreeProps) {
         <div 
           className="absolute left-1/2 w-2 bg-gradient-to-b from-pink-300 via-purple-300 to-pink-200 transform -translate-x-1/2 rounded-full shadow-lg"
           style={{
-            top: '400px',
+            top: '450px',
             bottom: '360px'
           }}
         />
